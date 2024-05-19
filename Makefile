@@ -30,6 +30,13 @@ TAREXT = tgz
 
 default: randall
 
+# Unit test that checks NBYTES.
+check: randall
+	@echo "Running test cases..."
+	@echo "=========== TEST 1 ==========="
+	@./randall 20 | wc -c | (grep -q "^20$$" && echo "PASSED") || (echo "FAILED" && false)
+
+
 randall: randall.c
 	$(CC) $(CFLAGS) $@.c -o $@
 
