@@ -37,8 +37,12 @@ check: randall
 	@./randall 20 | wc -c | (grep -q "^20$$" && echo "PASSED") || (echo "FAILED" && false)
 
 
-randall: randall.c
-	$(CC) $(CFLAGS) $@.c -o $@
+# Relevant files.
+FILES = $(wildcard *.c) $(wildcard *.h)
+
+randall: randall.c $(FILES)
+	$(CC) $(CFLAGS) *.c -o $@
+
 
 assignment: randall-assignment.$(TAREXT)
 assignment-files = COPYING Makefile randall.c
