@@ -48,6 +48,5 @@ main (int argc, char **argv)
     return 1;
   }
 
-  int returnVal = handle_output(nbytes);
-  return returnVal;
+  return handle_output(nbytes);
 }
