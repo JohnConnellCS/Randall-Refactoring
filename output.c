@@ -15,7 +15,7 @@ writebytes (unsigned long long x, int nbytes)
   return true;
 }
 
-int handle_output(int nbytes, char *input)
+int handle_output(int nbytes, char *input, char *output)
 {
     /* Now that we know we have work to do, arrange to use the
      appropriate library.  */
@@ -24,18 +24,20 @@ int handle_output(int nbytes, char *input)
   void (*finalize) (void);
   if (strcmp(input, "rdrand") == 0 && rdrand_supported ())
     {
+      //rdrand option
       initialize = hardware_rand64_init;
       rand64 = hardware_rand64;
       finalize = hardware_rand64_fini;
     }
   else  if(strcmp(input, "lrand48_r") == 0)
     {
+      //lrand48_r option
       initialize = software_rand64_init;
       rand64 = software_rand64;
       finalize = software_rand64_fini;
     } else {
-      fprintf(stderr, "Invalid input option: %s\n", input);
-      return 1;
+      //file option
+      //CHECK FOR ERRORS USING BELOW
   }
 /*else if(strcmp(input[0],'/') == 0){
       
@@ -54,6 +56,8 @@ int handle_output(int nbytes, char *input)
   int wordsize = sizeof rand64 ();
   int output_errno = 0;
 
+
+if(strcmp(output, "stdio") == 0){
   do
     {
       unsigned long long x = rand64 ();
@@ -75,7 +79,9 @@ int handle_output(int nbytes, char *input)
       errno = output_errno;
       perror ("output");
     }
-
+}else{
+  //deal with N options case
+}
   finalize ();
   return !!output_errno;
 }

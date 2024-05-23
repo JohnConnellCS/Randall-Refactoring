@@ -47,7 +47,6 @@ main (int argc, char **argv)
   int argVal;
   char *input = "rdrand";
   char *output = "stdio";
-  char *custom_file = NULL;
 
   while ((argVal = getopt (argc, argv, "i:o:")) != -1)
   {
@@ -62,11 +61,6 @@ main (int argc, char **argv)
     }
   }
 
-  if(input[0] == '/'){
-    custom_file = input;
-    input = "file";
-  }
-
   /* Check arguments.  */
   long long nbytes;
   nbytes = handle_nbytes(argc, argv);
@@ -77,7 +71,7 @@ main (int argc, char **argv)
     return 1;
   }
 
-  return handle_output(nbytes, input);
+  return handle_output(nbytes, input, output);
 }
 
 

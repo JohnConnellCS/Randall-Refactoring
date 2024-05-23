@@ -11,5 +11,5 @@
 
 bool 
 writebytes (unsigned long long x, int nbytes);
-int handle_output(int nbytes, char *input);
+int handle_output(int nbytes, char *input, char *output);
 #endif 
