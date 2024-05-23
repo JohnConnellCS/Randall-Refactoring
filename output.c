@@ -23,7 +23,7 @@ int handle_output(int nbytes, char *input, char *output)
   unsigned long long (*rand64) (void);
   void (*finalize) (void);
 
-  if(input == "" || output == ""){
+  if(strcmp(input,"") == 0 || strcmp(output,"") == 0){
     return -1;
   }
 
