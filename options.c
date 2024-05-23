@@ -22,7 +22,7 @@ long long handle_nbytes(int argc, char **argv)
   if (!valid)
     {
       fprintf (stderr, "%s: usage: %s NBYTES\n", argv[0], argv[0]);
-      return 1;
+      return -1;
     }
 
   /* If there's no work to do, don't worry about which library to use.*/ 
