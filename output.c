@@ -22,6 +22,11 @@ int handle_output(int nbytes, char *input, char *output)
   void (*initialize) (void);
   unsigned long long (*rand64) (void);
   void (*finalize) (void);
+
+  if(input == "" || output == ""){
+    return -1;
+  }
+
   if (strcmp(input, "rdrand") == 0 && rdrand_supported ())
     {
       //rdrand option
@@ -80,7 +85,7 @@ if(strcmp(output, "stdio") == 0){
       perror ("output");
     }
 }else{
-  //deal with N options case
+  //N case
 }
   finalize ();
   return !!output_errno;
