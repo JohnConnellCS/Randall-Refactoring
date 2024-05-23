@@ -8,11 +8,12 @@ FILE *urandstream;
 
 /* Initialize the software rand64 implementation.  */
 void
-software_rand64_init (void)
+software_rand64_init (const char *filepath)
 {
-  urandstream = fopen ("/dev/random", "r");
-  if (! urandstream)
+  urandstream = fopen (filepath, "r");
+  if (! urandstream){
     abort ();
+  }
 }
 
 /* Return a random value, using software operations.  */

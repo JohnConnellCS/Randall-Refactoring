@@ -19,7 +19,7 @@ int handle_output(int nbytes, char *input, char *output)
 {
     /* Now that we know we have work to do, arrange to use the
      appropriate library.  */
-  void (*initialize) (void);
+  void (*initialize) (const char *);
   unsigned long long (*rand64) (void);
   void (*finalize) (void);
 
@@ -30,7 +30,7 @@ int handle_output(int nbytes, char *input, char *output)
   if (strcmp(input, "rdrand") == 0 && rdrand_supported ())
     {
       //rdrand option
-      initialize = hardware_rand64_init;
+      initialize = (void (*)(const char *))hardware_rand64_init;
       rand64 = hardware_rand64;
       finalize = hardware_rand64_fini;
     }
@@ -40,24 +40,18 @@ int handle_output(int nbytes, char *input, char *output)
       initialize = software_rand64_init;
       rand64 = software_rand64;
       finalize = software_rand64_fini;
+      //NEED INITIALIZE STATEMENT
     } else {
       //file option
-      //CHECK FOR ERRORS USING BELOW
-  }
-/*else if(strcmp(input[0],'/') == 0){
-      
-      int fd = open(input, O_RDONLY);
-      if(fd == -1){
-        perror("open");
-        return 1;
+      if (input[0] != '/') {
+        return -1;
       }
-      initialize = file_rand64_init;
-      rand64 = file_rand64;
-      finalize = file_rand64_fini;
-      set_file_descriptor(fd)
-      
-  }*/
-  initialize ();
+      initialize = software_rand64_init;
+      rand64 = software_rand64;
+      finalize = software_rand64_fini;
+  }
+
+  initialize(input);
   int wordsize = sizeof rand64 ();
   int output_errno = 0;
 

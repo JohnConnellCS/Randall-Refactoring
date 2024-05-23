@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
     void
-    software_rand64_init (void);
+    software_rand64_init (const char *filepath);
     unsigned long long
     software_rand64 (void);
     void
