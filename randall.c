@@ -29,6 +29,11 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <unistd.h>
+#include <fcntl.h>
+#include <getopt.h>
+
 #include "rand64-hw.h"
 #include "rand64-sw.h"
 #include "output.h"
@@ -38,6 +43,24 @@
 int
 main (int argc, char **argv)
 {
+  /* parse for options*/
+  int argVal;
+  char *input = "rdrand";
+  char *output = "stdio";
+
+  while ((argVal = getopt (argc, argv, "i:o:")) != -1)
+  {
+    switch(argVal)
+    {
+    case 'i':
+      input = optarg;
+      break;
+    case 'o':
+      output = optarg;
+      break;
+    }
+  }
+
   /* Check arguments.  */
   long long nbytes;
   nbytes = handle_nbytes(argc, argv);
@@ -49,4 +72,19 @@ main (int argc, char **argv)
   }
 
   return handle_output(nbytes);
+}
+
+
+long long get_nbytes(int argc, char **argv) {
+    if (optind < argc) {
+        char *endptr;
+        long long nbytes = strtoll(argv[optind], &endptr, 10);
+        if (*endptr != '\0' || nbytes < 0) {
+            fprintf(stderr, "Invalid number of bytes: %s\n", argv[optind]);
+            return 0;
+        }
+        return nbytes;
+    }
+    fprintf(stderr, "Usage: %s [-i input] [-o output] <nbytes>\n", argv[0]);
+    return 0;
 }
