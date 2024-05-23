@@ -1,6 +1,4 @@
 
-#include <errno.h>
-
 #include "options.h"
 
 long long handle_nbytes(int argc, char **argv)
