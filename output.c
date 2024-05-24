@@ -37,10 +37,9 @@ int handle_output(int nbytes, char *input, char *output)
   else  if(strcmp(input, "lrand48_r") == 0)
     {
       //lrand48_r option
-      initialize = software_rand64_init;
-      rand64 = software_rand64;
-      finalize = software_rand64_fini;
-      //NEED INITIALIZE STATEMENT
+      initialize = (void (*)(const char *))mrand_rand64_init;
+      rand64 = mrand_rand64;
+      finalize = mrand_rand64_fini;
     } else {
       //file option
       if (input[0] != '/') {

@@ -36,6 +36,7 @@
 
 #include "rand64-hw.h"
 #include "rand64-sw.h"
+#include "rand64-mw.h"
 #include "output.h"
 #include "options.h"
 

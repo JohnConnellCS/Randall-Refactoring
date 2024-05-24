@@ -8,6 +8,7 @@
 
 #include "rand64-hw.h"
 #include "rand64-sw.h"
+#include "rand64-mw.h"
 
 bool 
 writebytes (unsigned long long x, int nbytes);
