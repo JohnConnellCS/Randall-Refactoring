@@ -1,7 +1,6 @@
 #include "output.h"
 
-bool
-writebytes (unsigned long long x, int nbytes)
+bool writebytes (unsigned long long x, int nbytes)
 {
   do
     {
@@ -15,6 +14,22 @@ writebytes (unsigned long long x, int nbytes)
   return true;
 }
 
+bool writeNbytes(unsigned long long randVal, long unsigned int num_writing, int fd) {
+  char buffer[sizeof(unsigned long long)];
+  int bytes_to_write = num_writing < sizeof(randVal) ? num_writing : sizeof(randVal);
+
+  for(int i = 0; i < bytes_to_write; i++){
+    buffer[i] = randVal & 0xFF;
+    randVal >>= CHAR_BIT;
+  }
+
+  ssize_t wrote = write(fd, buffer, bytes_to_write);
+  if(wrote < 0)
+    return false;
+  return true;
+}
+
+
 int handle_output(int nbytes, char *input, char *output)
 {
     /* Now that we know we have work to do, arrange to use the
@@ -22,7 +37,6 @@ int handle_output(int nbytes, char *input, char *output)
   void (*initialize) (const char *);
   unsigned long long (*rand64) (void);
   void (*finalize) (void);
-
   if(strcmp(input,"") == 0 || strcmp(output,"") == 0){
     return -1;
   }
@@ -49,6 +63,7 @@ int handle_output(int nbytes, char *input, char *output)
       rand64 = software_rand64;
       finalize = software_rand64_fini;
   }
+
 
   initialize(input);
   int wordsize = sizeof rand64 ();
@@ -78,7 +93,44 @@ if(strcmp(output, "stdio") == 0){
       perror ("output");
     }
 }else{
-  //N case
+  int N = atoi(output);
+  if(N <= 0){
+    return -1;
+  }
+  char *buffer = (char *) malloc(nbytes);
+
+
+  int fd = STDOUT_FILENO;
+  int remaining = nbytes;
+
+  while(remaining > 0){
+    int num_writing = remaining < N ? remaining : N;
+    int buffer_pos = 0;
+    while(buffer_pos < num_writing){
+      unsigned long long x = rand64();
+      for(int i = 0; i < wordsize && buffer_pos < num_writing; i++){
+        buffer[buffer_pos++] = x & 0xFF;
+        x >>= CHAR_BIT;
+      }
+
+    }
+    if (write(fd, buffer, num_writing) < 0) {
+                output_errno = errno;
+                break;
+    }
+    remaining -= num_writing;
+  }
+
+  free(buffer);
+
+  if (fclose (stdout) != 0)
+    output_errno = errno;
+
+  if (output_errno)
+    {
+      errno = output_errno;
+      perror ("output");
+    }
 }
   finalize ();
   return !!output_errno;
