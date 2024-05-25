@@ -23,13 +23,13 @@ struct drand48_data state;
             return -1;
         }
 
-        long long unsig_rand1 = rand1 << 32;
-        long long unsig_rand2 = rand2;
-        //printf("rand1: %lu ", unsig_rand1);
-        //printf("rand2: %lu ", unsig_rand2);
-
-        x = unsig_rand1 | unsig_rand2;
-        printf("x: %llu \n", x);
+        unsigned long long int unsig_rand1 = ((unsigned long long int)rand1) & 0xFFFFFFFF;
+        unsigned long long int unsig_rand2 = (unsigned long long int)rand2 & 0xFFFFFFF;
+        //printf("\n rand1: %llu \n", unsig_rand1);
+        //printf("\n rand2: %llu  \n", unsig_rand2);
+        unsigned long long int shift_unsig_rand1 = unsig_rand1 << 32;
+        x = shift_unsig_rand1 | unsig_rand2;
+        //printf("\n x: %llu \n", x);
         return x;
     }
 
