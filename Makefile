@@ -51,7 +51,7 @@ randall-assignment.$(TAREXT): $(assignment-files)
 
 submission-tarball: randall-submission.$(TAREXT)
 submission-files = $(assignment-files) \
-  notes.txt # More files should be listed here, as needed.
+  notes.txt $(FILES)
 randall-submission.$(TAREXT): $(submission-files)
 	$(TAR) $(TARFLAGS) -cf $@ $(submission-files)
 

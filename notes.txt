@@ -1,7 +1,7 @@
 John Connell
 5/19/2024
 Eggert
-Assignment 6 CS35L
+Assignment 6 CS35L & Time Testing
 * Setup and downloading the starter code
    * Make a directory and move into it
    * Use wget with the link to the tarball file
@@ -27,15 +27,11 @@ Assignment 6 CS35L
       * Create rand64-sw header and c files
       * Copy Funcntion related to software from randall.c(under the hardware functions but above writebytes)
       * Add function declarations into header file, an include guard, and the stdlib.h and stdio.h libraries
-      * Copy The randall.c function starting from the comment “ Now that we know we have work to do” and ending at “return !!output_errno;”. 
-      Put this code into “int handle_output(int nbytes)”. We are moving this into the outfile as it determines return value and output. 
-      Back in randall.c, return the result of calling handle_output with nbytes.
+      * Copy The randall.c function starting from the comment “/* Now that we know we have work to do” and ending at “return !!output_errno;”. Put this code into “int handle_output(int nbytes)”. We are moving this into the outfile as it determines return value and output. Back in randall.c, return the result of calling handle_output with nbytes.
    * Refactor output
       * Create output header and c files
       * Add function declarations into header file, an include guard, and the stdbool.h, stdlib.h, stdio.h, errno.h, rand64-hw, and rand 64-sw libraries(we’ll use these in a second)
-      * Copy The randall.c function starting from the comment “ Now that we know we have work to do” and ending at “return !!output_errno;”. 
-      Put this code into “int handle_output(int nbytes)”. We are moving this into the outfile as it determines return value and output. 
-      Back in randall.c, return the result of calling handle_output with nbytes.
+      * Copy The randall.c function starting from the comment “/* Now that we know we have work to do” and ending at “return !!output_errno;”. Put this code into “int handle_output(int nbytes)”. We are moving this into the outfile as it determines return value and output. Back in randall.c, return the result of calling handle_output with nbytes.
    * Refactor options
       * Create options header and c files
       * Add function declarations into header file, an include guard, and the stdbool.h, stdlib.h, stdio.h, errno.h
@@ -49,8 +45,7 @@ Assignment 6 CS35L
    * Test
       * Run previous tests as well as the aforementioned inputs to ensure that output it still random and consistent with input.
 * Implement argument parsing with getopt.
-   * Implement the input and output flags by including getopt.h and then making a while loop “ while ((argVal = getopt (argc, argv, "i:o:")) != -1) “ which updates the value of new input and output values. 
-   Those values should be set to rdrand and stdio by default.
+   * Implement the input and output flags by including getopt.h and then making a while loop “ while ((argVal = getopt (argc, argv, "i:o:")) != -1) “ which updates the value of new input and output values. Those values should be set to rdrand and stdio by default.
    * Include unistd.h in options.h, and update the error condition to check if optind(the first argument not after a flag) is less than argc.
    * Import unistd.h into options.h so that we can utilize optind. Now have handle_nbytes check if optind < argc(there exists a valid argument for nbytes) and set nbytes to “strtoll(argv[optind], &endptr, 10);”.
 * Modify output handling to take in arguments.
@@ -72,9 +67,85 @@ Assignment 6 CS35L
    * For the actual randomization function, call mrand48_r twice and save the values returned into rand1 and rand2. Check to make sure the return values were non-negative to see if an error occurred. 
    * Cast rand1 and rand2 to unsigned long long ints and & them with 0xFFFFFFFF to remove possible sign extensions. Shift rand1 left 32 times and return the values of &’ing the shifted rand1 with rand2.
 * Implement N option for output.
-   * Before the do while statement for output, do a strcmp to see if output is stdio. Otherwise, we want to use the N option for output. In the else part of the conditional, 
-   initialize an int version of N using atoi and a buffer using “char *buffer = (char *) malloc(nbytes);” which creates a buffer of size nbytes and returns a charpointer you can access.
-   * Import unistd in output.h so you can access STDOUT_FILENO. Similar to the stdio branch, make a while loop that checks if there are more characters remaining and initalizes variables 
-   buffer_pos to 0 and num_writing to whichever is less between N and the remaining number of bytes.
-   * Within the while loop make a new while loop that checks if remaining > 0 which grabs a value x from rand64() and puts characters into the buffer by rightshifting x by CHAR_BIT until the num_writing has been hit. 
-   Use write(STDOUT_FILENO, buffer, num_writing) to write to stdout and decrement remaining by num_writing before starting the next iteration.
+   * Before the do while statement for output, do a strcmp to see if output is stdio. Otherwise, we want to use the N option for output. In the else part of the conditional, initialize an int version of N using atoi and a buffer using “char *buffer = (char *) malloc(nbytes);” which creates a buffer of size nbytes and returns a charpointer you can access.
+   * Import unistd in output.h so you can access STDOUT_FILENO. Similar to the stdio branch, make a while loop that checks if there are more characters remaining and initalizes variables buffer_pos to 0 and num_writing to whichever is less between N and the remaining number of bytes.
+   * Within the while loop make a new while loop that checks if remaining > 0 which grabs a value x from rand64() and puts characters into the buffer by rightshifting x by CHAR_BIT until the num_writing has been hit. Use write(STDOUT_FILENO, buffer, num_writing) to write to stdout and decrement remaining by num_writing before starting the next iteration.
+* Sanity Check Test
+time dd if=/dev/urandom ibs=8192 obs=8192 count=16384 >/dev/null
+16384+0 records in
+16384+0 records out
+134217728 bytes (134 MB, 128 MiB) copied, 0.912955 s, 147 MB/s
+real    0m0.951s
+user    0m0.015s
+sys     0m0.897s
+
+
+* Test 1
+time ./randall 134217728 >/dev/null 
+real    0m4.090s
+user    0m4.014s
+sys     0m0.015s
+
+
+time ./randall 134217728 -i /dev/urandom  >/dev/null
+real    0m2.695s
+user    0m1.762s
+sys     0m0.924s
+
+
+time ./randall 134217728 -i lrand48_r  >/dev/null   
+real    0m1.652s
+user    0m1.636s
+sys     0m0.010s
+
+
+* Test 2
+time ./randall 134217728 | cat >/dev/null
+
+
+real    0m4.273s
+user    0m4.187s
+sys     0m0.275s
+
+
+time ./randall 134217728 -i /dev/urandom | cat >/dev/null
+
+
+real    0m2.805s
+user    0m1.845s
+sys     0m1.139s
+
+
+        time ./randall 134217728 -i lrand48_r | cat >/dev/null
+
+
+real    0m1.752s
+user    0m1.647s
+sys     0m0.289s
+
+
+* Test 3
+./randall 134217728 >rand.data
+
+
+real    0m5.863s
+user    0m4.018s
+sys     0m0.161s
+
+
+time ./randall 134217728  -i /dev/urandom >rand.data
+
+
+real    0m4.565s
+user    0m1.958s
+sys     0m0.857s
+
+
+time ./randall 134217728  -i lrand48_r  >rand.data
+
+
+
+
+real    0m3.428s
+user    0m1.640s
+sys     0m0.119s
