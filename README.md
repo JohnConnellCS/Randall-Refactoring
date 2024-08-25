@@ -1,4 +1,4 @@
-DEV LOG: 
+Personal Development Notes:
 * Setup and downloading the starter code
    * Make a directory and move into it
    * Use wget with the link to the tarball file
@@ -37,5 +37,5 @@ DEV LOG:
       * Overwrite the lines that says “randall: randall.c” with the following chunk of code. This ensures that all files are used when running make.
          * # Relevant files.
          * FILES = $(wildcard *.c) $(wildcard *.h)
-         *          * randall: randall.c $(FILES)
-         *         $(CC) $(CFLAGS) *.c -o $@
+         * randall: randall.c $(FILES)
+         * $(CC) $(CFLAGS) *.c -o $@
